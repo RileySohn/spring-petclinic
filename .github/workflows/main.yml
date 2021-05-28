@@ -21,30 +21,21 @@ jobs:
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
 
-      # - name: Set up JDK 11
-      #   uses: actions/setup-java@v1
-      #   with:
-      #     java-version: 11
+# #---------------------snyk-----------------
+#       - name: Run Snyk to check for vulnerabilities
+#         uses: snyk/actions/maven-3-jdk-11@master
+#         continue-on-error: true # To make sure that SARIF upload gets called
+#         env:
+#           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+#         with:
+#           args: --sarif-file-output=snyk.sarif
+#       - name: Upload result to GitHub Code Scanning
+#         uses: github/codeql-action/upload-sarif@v1
+#         with:
+#           sarif_file: snyk.sarif
+# #------------------snyk end--------------------
 
-      # - name: Cache Maven packages
-      #   uses: actions/cache@v1
-      #   with:
-      #     path: ~/.m2
-      #     key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-      #     restore-keys: ${{ runner.os }}-m2
-
-      - name: Run Snyk to check for vulnerabilities
-        uses: snyk/actions/maven-3-jdk-11@master
-        continue-on-error: true # To make sure that SARIF upload gets called
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        with:
-          args: --sarif-file-output=snyk.sarif
-      - name: Upload result to GitHub Code Scanning
-        uses: github/codeql-action/upload-sarif@v1
-        with:
-          sarif_file: snyk.sarif
-
+#-----------------sonarcloud-------------------
       # - name: Set up JDK 11
       #   uses: actions/setup-java@v1
       #   with:
@@ -69,12 +60,14 @@ jobs:
       #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
       #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       #   run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
+#----------------sonarcloud end---------------------------
 
-      # - name: DevSkim
-      #   uses: microsoft/DevSkim-Action@v1
-      #   with:
-      #     output-filename: devskim-results.sarif
-      #     output-directory: ./
 
-      # - name: show results
-      #   run: cat ./devskim-results.sarif
+      - name: DevSkim
+        uses: microsoft/DevSkim-Action@v1
+        with:
+          output-filename: devskim-results.sarif
+          output-directory: ./
+
+      - name: show results
+        run: cat ./devskim-results.sarif
