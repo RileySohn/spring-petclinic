@@ -69,5 +69,8 @@ jobs:
           output-filename: devskim-results.sarif
           output-directory: ./
 
-      - name: show results
-        run: cat ./devskim-results.sarif
+      - name: Archive devskim results
+        uses: actions/upload-artifact@v2
+        with:
+          name: devskim results
+          path: ./devskim-results.sarif
